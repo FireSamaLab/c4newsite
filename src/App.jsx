@@ -84,22 +84,22 @@ const budgetRanges = [
 
 const projects = [
   {
-    src: '/assets/project-shell.jpg',
+    src: 'assets/project-shell.jpg',
     label: 'Structure résidentielle',
     detail: 'Construction neuve',
   },
   {
-    src: '/assets/project-deck.jpg',
+    src: 'assets/project-deck.jpg',
     label: 'Terrasse et extérieur',
     detail: 'Finition et aménagement',
   },
   {
-    src: '/assets/project-frame.jpg',
+    src: 'assets/project-frame.jpg',
     label: 'Charpente apparente',
     detail: 'Ossature et structure',
   },
   {
-    src: '/assets/project-reno.jpg',
+    src: 'assets/project-reno.jpg',
     label: 'Agrandissement',
     detail: 'Rénovation majeure',
   },
@@ -111,6 +111,10 @@ const trustItems = [
   { icon: MapPin, label: 'Outaouais et environs' },
   { icon: Clock, label: 'Ouvert 7 jours' },
 ];
+
+function asset(path) {
+  return `${import.meta.env.BASE_URL}${path}`;
+}
 
 function buildAgentPayload(form) {
   const data = new FormData(form);
@@ -155,7 +159,7 @@ function C4ConstructionSite() {
       <header className="sticky top-0 z-50 border-b border-stone-200 bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3">
           <a href="#accueil" className="flex items-center gap-3" aria-label="Construction C4 accueil">
-            <img src="/assets/c4-logo.png" alt="Construction C4" className="h-14 w-14 object-contain" />
+            <img src={asset('assets/c4-logo.png')} alt="Construction C4" className="h-14 w-14 object-contain" />
             <div className="hidden sm:block">
               <p className="text-lg font-black uppercase leading-tight tracking-wide">Construction C4</p>
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-red-700">Outaouais</p>
@@ -181,14 +185,14 @@ function C4ConstructionSite() {
       <main id="accueil">
         <section className="relative min-h-[calc(100vh-82px)] overflow-hidden bg-stone-950 text-white">
           <img
-            src="/assets/hero-framing.jpg"
+            src={asset('assets/hero-framing.jpg')}
             alt="Chantier Construction C4 en structure de bois"
             className="absolute inset-0 h-full w-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-stone-950 via-stone-950/78 to-stone-950/20" />
           <div className="relative mx-auto grid min-h-[calc(100vh-82px)] max-w-7xl items-center gap-10 px-5 py-16 lg:grid-cols-[1fr_430px]">
             <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }} className="max-w-3xl">
-              <img src="/assets/c4-logo.png" alt="Construction C4" className="mb-8 h-24 w-24 object-contain" />
+              <img src={asset('assets/c4-logo.png')} alt="Construction C4" className="mb-8 h-24 w-24 object-contain" />
               <Badge className="mb-5 bg-red-700 text-white">Entrepreneur général en Outaouais</Badge>
               <h1 className="text-5xl font-black leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
                 Bâtir des vies, un projet à la fois.
@@ -273,7 +277,7 @@ function C4ConstructionSite() {
             <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
               {projects.map((project) => (
                 <article key={project.src} className="group overflow-hidden rounded-lg border border-white/10 bg-white/5">
-                  <img src={project.src} alt={project.label} className="h-72 w-full object-cover transition duration-500 group-hover:scale-105" />
+                  <img src={asset(project.src)} alt={project.label} className="h-72 w-full object-cover transition duration-500 group-hover:scale-105" />
                   <div className="p-4">
                     <p className="font-bold">{project.label}</p>
                     <p className="mt-1 text-sm text-stone-300">{project.detail}</p>
@@ -408,7 +412,7 @@ function C4ConstructionSite() {
       <footer id="contact" className="bg-stone-950 py-12 text-stone-300">
         <div className="mx-auto grid max-w-7xl gap-8 px-5 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <img src="/assets/c4-logo.png" alt="Construction C4" className="h-16 w-16 object-contain" />
+            <img src={asset('assets/c4-logo.png')} alt="Construction C4" className="h-16 w-16 object-contain" />
             <p className="mt-4 max-w-xl text-white">Construction C4</p>
             <p className="mt-2 max-w-xl leading-7">Entrepreneur général spécialisé dans une gamme étendue de travaux dans la région de l’Outaouais.</p>
           </div>
