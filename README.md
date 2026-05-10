@@ -18,3 +18,13 @@ npm run build
 ## Deploy
 
 Recommended: import this GitHub repo into Vercel and deploy automatically.
+
+## GitHub Pages
+
+This repository deploys automatically to GitHub Pages on every push to `main`.
+
+Production preview:
+
+```text
+https://firesamalab.github.io/c4newsite/
+```
