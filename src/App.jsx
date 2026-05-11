@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { motion, useReducedMotion } from 'framer-motion';
 import {
   ArrowRight,
   BadgeCheck,
@@ -106,6 +107,22 @@ const copy = {
 
 const serviceIcons = [Home, Hammer, ClipboardCheck, ShieldCheck, BadgeCheck, Clock];
 
+const easeOut = [0.22, 1, 0.36, 1];
+
+const staggerGroup = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0.08,
+    },
+  },
+};
+
+const itemReveal = {
+  hidden: { opacity: 0, y: 18 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: easeOut } },
+};
+
 function asset(path) {
   return `${import.meta.env.BASE_URL}${path}`;
 }
@@ -154,7 +171,16 @@ function buildAgentPayload(form, language) {
 function C4ConstructionSite() {
   const [language, setLanguage] = useState('fr');
   const [submitted, setSubmitted] = useState(false);
+  const reduceMotion = useReducedMotion();
   const t = copy[language];
+
+  const heroReveal = reduceMotion
+    ? { initial: false, animate: { opacity: 1 } }
+    : { initial: { opacity: 0, y: 24 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.55, ease: easeOut } };
+
+  const formReveal = reduceMotion
+    ? { initial: false, animate: { opacity: 1 } }
+    : { initial: { opacity: 0, y: 18, scale: 0.98 }, animate: { opacity: 1, y: 0, scale: 1 }, transition: { duration: 0.55, delay: 0.12, ease: easeOut } };
 
   function toggleLanguage() {
     setLanguage((current) => (current === 'fr' ? 'en' : 'fr'));
@@ -199,7 +225,7 @@ function C4ConstructionSite() {
           <div className="absolute inset-0 bg-gradient-to-b from-stone-950/25 via-stone-950/20 to-stone-950/90" />
 
           <div className="relative mx-auto grid min-h-[calc(100svh-72px)] max-w-6xl items-center gap-8 px-5 py-10 lg:grid-cols-[minmax(0,1fr)_420px]">
-            <div className="max-w-2xl py-8">
+            <motion.div className="max-w-2xl py-8" {...heroReveal}>
               <Badge className="mb-5 bg-red-700 text-white">{t.badge}</Badge>
               <h1 className="text-4xl font-black leading-tight sm:text-5xl lg:text-6xl">
                 {t.title}
@@ -233,115 +259,141 @@ function C4ConstructionSite() {
                   {business.region}
                 </span>
               </div>
-            </div>
+            </motion.div>
 
-            <Card id="soumission" className="border-0 shadow-2xl">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-2xl font-black">{t.formTitle}</CardTitle>
-                <CardDescription className="text-base">{t.formText}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form className="grid gap-4" onSubmit={handleSubmit}>
-                  <input type="hidden" name="source" value="construction-c4-website" />
-                  <input type="hidden" name="intakeVersion" value="clean-intake-v2" />
-                  <input type="hidden" name="language" value={language} />
+            <motion.div id="soumission" {...formReveal}>
+              <Card className="border-0 shadow-2xl">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-2xl font-black">{t.formTitle}</CardTitle>
+                  <CardDescription className="text-base">{t.formText}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <form className="grid gap-4" onSubmit={handleSubmit}>
+                    <input type="hidden" name="source" value="construction-c4-website" />
+                    <input type="hidden" name="intakeVersion" value="clean-intake-v2" />
+                    <input type="hidden" name="language" value={language} />
 
-                  <div className="space-y-2">
-                    <Label htmlFor="fullName">{t.labels.fullName}</Label>
-                    <Input id="fullName" name="fullName" autoComplete="name" required />
-                  </div>
-
-                  <div className="grid gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
-                      <Label htmlFor="phone">{t.labels.phone}</Label>
-                      <Input id="phone" name="phone" type="tel" autoComplete="tel" required />
+                      <Label htmlFor="fullName">{t.labels.fullName}</Label>
+                      <Input id="fullName" name="fullName" autoComplete="name" required />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">{t.labels.email}</Label>
-                      <Input id="email" name="email" type="email" autoComplete="email" />
-                    </div>
-                  </div>
 
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="projectType">{t.labels.projectType}</Label>
-                      <div className="relative">
-                        <Select id="projectType" name="projectType" defaultValue="default" className="appearance-none pr-9" required>
-                          <option value="default" disabled>{t.select}</option>
-                          {t.projectTypes.map((type) => <option key={type}>{type}</option>)}
-                        </Select>
-                        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-500" />
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="phone">{t.labels.phone}</Label>
+                        <Input id="phone" name="phone" type="tel" autoComplete="tel" required />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="email">{t.labels.email}</Label>
+                        <Input id="email" name="email" type="email" autoComplete="email" />
                       </div>
                     </div>
+
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="projectType">{t.labels.projectType}</Label>
+                        <div className="relative">
+                          <Select id="projectType" name="projectType" defaultValue="default" className="appearance-none pr-9" required>
+                            <option value="default" disabled>{t.select}</option>
+                            {t.projectTypes.map((type) => <option key={type}>{type}</option>)}
+                          </Select>
+                          <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-500" />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="city">{t.labels.city}</Label>
+                        <Input id="city" name="city" placeholder={t.cityPlaceholder} required />
+                      </div>
+                    </div>
+
                     <div className="space-y-2">
-                      <Label htmlFor="city">{t.labels.city}</Label>
-                      <Input id="city" name="city" placeholder={t.cityPlaceholder} required />
+                      <Label htmlFor="description">{t.labels.description}</Label>
+                      <Textarea id="description" name="description" placeholder={t.descriptionPlaceholder} required />
                     </div>
-                  </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="description">{t.labels.description}</Label>
-                    <Textarea id="description" name="description" placeholder={t.descriptionPlaceholder} required />
-                  </div>
-
-                  <div className="rounded-lg border border-dashed border-stone-300 bg-stone-50 p-4">
-                    <Label htmlFor="photos" className="flex items-center gap-2 text-sm font-semibold">
-                      <Upload className="h-4 w-4 text-red-700" />
-                      {t.labels.photos}
-                    </Label>
-                    <Input id="photos" name="photos" type="file" accept="image/*" multiple className="mt-3 bg-white" />
-                    <p className="mt-2 flex items-center gap-2 text-sm text-stone-500">
-                      <Camera className="h-4 w-4" />
-                      {t.photoCta}
-                    </p>
-                  </div>
-
-                  {submitted && (
-                    <div className="flex items-start gap-3 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-900">
-                      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" />
-                      <p>{t.submitted}</p>
+                    <div className="rounded-lg border border-dashed border-stone-300 bg-stone-50 p-4">
+                      <Label htmlFor="photos" className="flex items-center gap-2 text-sm font-semibold">
+                        <Upload className="h-4 w-4 text-red-700" />
+                        {t.labels.photos}
+                      </Label>
+                      <Input id="photos" name="photos" type="file" accept="image/*" multiple className="mt-3 bg-white" />
+                      <p className="mt-2 flex items-center gap-2 text-sm text-stone-500">
+                        <Camera className="h-4 w-4" />
+                        {t.photoCta}
+                      </p>
                     </div>
-                  )}
 
-                  <Button type="submit" size="lg" className="w-full">
-                    {t.submit}
-                    <ArrowRight className="h-5 w-5" />
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
+                    {submitted && (
+                      <motion.div
+                        className="flex items-start gap-3 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-900"
+                        initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.25 }}
+                      >
+                        <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" />
+                        <p>{t.submitted}</p>
+                      </motion.div>
+                    )}
+
+                    <motion.div whileTap={reduceMotion ? undefined : { scale: 0.99 }}>
+                      <Button type="submit" size="lg" className="w-full">
+                        {t.submit}
+                        <ArrowRight className="h-5 w-5" />
+                      </Button>
+                    </motion.div>
+                  </form>
+                </CardContent>
+              </Card>
+            </motion.div>
           </div>
         </section>
 
         <section className="border-b border-stone-200 bg-white">
-          <div className="mx-auto grid max-w-6xl gap-5 px-5 py-8 md:grid-cols-3">
+          <motion.div
+            className="mx-auto grid max-w-6xl gap-5 px-5 py-8 md:grid-cols-3"
+            variants={reduceMotion ? undefined : staggerGroup}
+            initial={reduceMotion ? false : 'hidden'}
+            whileInView="show"
+            viewport={{ once: true, amount: 0.25 }}
+          >
             {t.proof.map(([title, text]) => (
-              <div key={title} className="flex gap-3">
+              <motion.div key={title} className="flex gap-3" variants={reduceMotion ? undefined : itemReveal}>
                 <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-red-700" />
                 <div>
                   <p className="font-bold">{title}</p>
                   <p className="mt-1 text-sm leading-6 text-stone-600">{text}</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </section>
 
         <section className="bg-stone-50 py-12">
           <div className="mx-auto max-w-6xl px-5">
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <motion.div
+              className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
+              variants={reduceMotion ? undefined : staggerGroup}
+              initial={reduceMotion ? false : 'hidden'}
+              whileInView="show"
+              viewport={{ once: true, amount: 0.2 }}
+            >
               {t.services.map((service, index) => {
                 const Icon = serviceIcons[index];
                 return (
-                  <article key={service} className="flex min-h-20 items-center gap-3 rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
+                  <motion.article
+                    key={service}
+                    className="flex min-h-20 items-center gap-3 rounded-lg border border-stone-200 bg-white p-4 shadow-sm"
+                    variants={reduceMotion ? undefined : itemReveal}
+                    whileHover={reduceMotion ? undefined : { y: -3 }}
+                  >
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-stone-950 text-white">
                       <Icon className="h-5 w-5" />
                     </span>
                     <p className="font-bold">{service}</p>
-                  </article>
+                  </motion.article>
                 );
               })}
-            </div>
+            </motion.div>
           </div>
         </section>
       </main>
